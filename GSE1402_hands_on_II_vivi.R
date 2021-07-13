@@ -141,8 +141,68 @@ exp2 <- exp2[rowSums( exp2 == 0 ) <= NumberOfSamplesWithZeroAllowed, ]
 library(mdp)
 mdp.results <- mdp( data = exp2, pdata = samplesinfo, control_lab = controlGroup,
                     file_name = paste( "GSE1402_MDP_", treatedGroup, "_", controlGroup, "_", sep = "" ) )
+                      
+# ++++++ plot number of samples
 
+targets <- phenodata_GSE1402_ok
 
+a <- as.data.frame(table(targets$Class))
+head(a)
+a <- a[order(a$Freq),]
+
+library(tidyverse)
+# BiocManager::install("tidyverse")
+a <- a %>% mutate(row = row_number())
+write.table(a, "GSE1402_number_samples.tsv", sep='\t', row.names = F, quote = F)
+
+# ++++ FIG ++++
+pdf(file = "GSE1402_Number_of_samples_barplot.pdf", width=6,height=4)
+p<-ggplot(data=a, aes(x=reorder(Var1, -row), y=Freq, fill=Var1)) +
+        geom_bar(stat="identity", aes(fill = Var1))+
+        scale_fill_manual(values = c("#1B9E77", "#7570B3", "#D95F02")) +
+        geom_text(aes(label=Freq), hjust=1.6, color="white", size=8)+
+        ggtitle("GSE1402 Number of Samples") +
+        labs(x = "", y = "") +
+        scale_y_continuous(limits = c(0, 26), breaks = c(0, 5, 10, 15, 20, 25))+
+        theme_bw() +
+        theme(
+                panel.grid.major = element_blank(),
+                panel.grid.minor = element_blank(),
+                panel.background = element_blank(),
+                panel.border = element_blank(),
+                plot.title = element_text(color = "black", size = 18),
+                axis.text.x =  element_text(colour = "#333333", size = 14),
+                axis.text.y =  element_text(color = "#333333", size = 18),
+                legend.position="none",
+                axis.ticks.y = element_blank()
+        )+
+        coord_flip()
+p
+dev.off()
+
+png(file = "GSE1402_Number_of_samples_barplot.png", units = "in", width = 6, height = 4, pointsize = 10, res = 100)
+p<-ggplot(data=a, aes(x=reorder(Var1, -row), y=Freq, fill=Var1)) +
+        geom_bar(stat="identity", aes(fill = Var1))+
+        scale_fill_manual(values = c("#1B9E77", "#7570B3", "#D95F02")) +
+        geom_text(aes(label=Freq), hjust=1.6, color="white", size=8)+
+        ggtitle("GSE1402 Number of Samples") +
+        labs(x = "", y = "") +
+        scale_y_continuous(limits = c(0, 26), breaks = c(0, 5, 10, 15, 20, 25))+
+        theme_bw() +
+        theme(
+                panel.grid.major = element_blank(),
+                panel.grid.minor = element_blank(),
+                panel.background = element_blank(),
+                panel.border = element_blank(),
+                plot.title = element_text(color = "black", size = 18),
+                axis.text.x =  element_text(colour = "#333333", size = 14),
+                axis.text.y =  element_text(color = "#333333", size = 18),
+                legend.position="none",
+                axis.ticks.y = element_blank()
+        )+
+        coord_flip()
+p
+dev.off()
 
 
 
